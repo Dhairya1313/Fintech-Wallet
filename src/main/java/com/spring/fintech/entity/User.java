@@ -32,6 +32,6 @@ public class User {
 	private LocalDate creadtedAt;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="address_id",unique=true)
+	@JoinColumn(name="wallet_id",unique=true)
 	private Wallet wallet;
 }

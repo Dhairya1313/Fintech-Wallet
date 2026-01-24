@@ -1,19 +1,24 @@
 package com.spring.fintech.service;
 
+import java.time.LocalDate;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.fintech.entity.User;
+import com.spring.fintech.entity.Wallet;
+import com.spring.fintech.entity.dto.UserDto;
+import com.spring.fintech.entity.dto.WalletDto;
 import com.spring.fintech.repository.UserRepository;
+import com.spring.fintech.repository.WalletRepository;
 
 @Service("userService")
 public class UserServiceImpl implements UserService{
 	
 	private UserRepository userRepository;
 	private ModelMapper modelMapper;
-	
-	
+	private WalletService walletService;
 	
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
@@ -23,17 +28,41 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public User registerUser(User user) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDto registerUser(UserDto userdto) {
+		
+		User savedUser = userRepository.save(modelMapper.map(userdto, User.class));
+		
+		savedUser.setCreadtedAt(LocalDate.now());
+		savedUser.setStatus("Active");
+		
+		WalletDto walletDto = new WalletDto();
+		walletDto.setUserId(savedUser.getUserId());
+		
+		savedUser.setWallet(modelMapper.map(walletService.addWallet(walletDto), Wallet.class)); 
+		userRepository.save(savedUser);
+		
+		return modelMapper.map(savedUser, UserDto.class);
 	}
 
 	@Override
-	public User authenticateUserByUserName(String userName, String password) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDto authenticateUserByUserName(String userName, String password) {
+		
+		User savedUser = userRepository.findUserByUserName(userName).orElseThrow(()->new RuntimeException("Invalid Username"));
+		
+		if(!savedUser.getPassword().equals(password))
+			throw new RuntimeException("Incorrect Password!");
+		if(!savedUser.getStatus().equalsIgnoreCase("Active"))
+			throw new RuntimeException("User not active");
+		
+		return modelMapper.map(savedUser, UserDto.class);
+		
+			
 	}
-	
-	
+
+	@Override
+	public double checkWalletBalance(String userName) {
+		return userRepository.findUserByUserName(userName).get().getWallet().getWalletBalance();
+		
+	}
 	
 }
