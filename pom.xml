@@ -74,8 +74,10 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<version>1.18.30</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
@@ -86,6 +88,30 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		  <!-- Spring Web -->
+    	<dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-web</artifactId>
+    	</dependency>
+
+    	<!-- Spring Security -->
+    	<dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-security</artifactId>
+    	</dependency>
+
+    <!-- JWT Library -->
+    	<dependency>
+        	<groupId>io.jsonwebtoken</groupId>
+        	<artifactId>jjwt</artifactId>
+        	<version>0.9.1</version>
+    	</dependency>
+
+    <!-- For password hashing -->
+    	<dependency>
+        	<groupId>org.springframework.security</groupId>
+        	<artifactId>spring-security-crypto</artifactId>
+    	</dependency>
 	</dependencies>
 
 	<build>
