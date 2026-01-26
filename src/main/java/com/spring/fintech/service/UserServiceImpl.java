@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.spring.fintech.entity.User;
 import com.spring.fintech.entity.Wallet;
 import com.spring.fintech.entity.dto.UserDto;
+import com.spring.fintech.entity.dto.UserRequestDto;
+import com.spring.fintech.entity.dto.UserResponseDto;
 import com.spring.fintech.entity.dto.WalletDto;
 import com.spring.fintech.repository.UserRepository;
 import com.spring.fintech.repository.WalletRepository;
@@ -28,7 +30,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public UserDto registerUser(UserDto userdto) {
+	public UserResponseDto registerUser(UserRequestDto userdto) {
 		
 		User savedUser = userRepository.save(modelMapper.map(userdto, User.class));
 		
@@ -41,11 +43,11 @@ public class UserServiceImpl implements UserService{
 		savedUser.setWallet(modelMapper.map(walletService.addWallet(walletDto), Wallet.class)); 
 		userRepository.save(savedUser);
 		
-		return modelMapper.map(savedUser, UserDto.class);
+		return modelMapper.map(savedUser, UserResponseDto.class);
 	}
 
 	@Override
-	public UserDto authenticateUserByUserName(String userName, String password) {
+	public UserResponseDto authenticateUserByUserName(String userName, String password) {
 		
 		User savedUser = userRepository.findUserByUserName(userName).orElseThrow(()->new RuntimeException("Invalid Username"));
 		
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService{
 		if(!savedUser.getStatus().equalsIgnoreCase("Active"))
 			throw new RuntimeException("User not active");
 		
-		return modelMapper.map(savedUser, UserDto.class);
+		return modelMapper.map(savedUser, UserResponseDto.class);
 		
 			
 	}
@@ -62,7 +64,6 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public double checkWalletBalance(String userName) {
 		return userRepository.findUserByUserName(userName).get().getWallet().getWalletBalance();
-		
 	}
 	
 }

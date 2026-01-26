@@ -94,7 +94,8 @@ public class WalletServiceImpl implements WalletService{
 		walletDto.setCreatedAt(LocalDate.now());
 		walletDto.setWalletBalance(0);
 		walletDto.setStatus("Active");
-		return null;
+		walletRepository.save(modelMapper.map(walletDto, Wallet.class));
+		return walletDto;
 	}
 	
 }

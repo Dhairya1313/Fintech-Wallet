@@ -1,9 +1,5 @@
 package com.spring.fintech.entity.dto;
 
-import java.time.LocalDate;
-
-import com.spring.fintech.entity.Wallet;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,14 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-	private int userId;
+public class UserRequestDto {
+	
 	private String userName;
 	private String password;
 	private String email;
 	
-	private String status;
-	private LocalDate creadtedAt;
-	
-	private Wallet wallet;
 }
