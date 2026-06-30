@@ -1,8 +1,8 @@
-package com.spring.fintech.service;
+package com.spring.fintech.user.service;
 
 
-import com.spring.fintech.entity.dto.UserRequestDto;
-import com.spring.fintech.entity.dto.UserResponseDto;
+import com.spring.fintech.user.dto.UserRequestDto;
+import com.spring.fintech.user.dto.UserResponseDto;
 
 public interface UserService {
 	

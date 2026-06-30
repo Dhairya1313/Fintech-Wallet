@@ -1,10 +1,10 @@
-package com.spring.fintech.service;
+package com.spring.fintech.transaction.service;
 
 import org.springframework.data.domain.Page;
 
-import com.spring.fintech.entity.Transaction;
-import com.spring.fintech.entity.dto.TransactionDto;
-import com.spring.fintech.repository.TransactionRepository;
+import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.transaction.entity.Transaction;
+import com.spring.fintech.transaction.repository.TransactionRepository;
 
 public interface TransactionService {
 	

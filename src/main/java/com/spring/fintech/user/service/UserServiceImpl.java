@@ -1,4 +1,4 @@
-package com.spring.fintech.service;
+package com.spring.fintech.user.service;
 
 import java.time.LocalDate;
 
@@ -6,14 +6,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.spring.fintech.entity.User;
-import com.spring.fintech.entity.Wallet;
-import com.spring.fintech.entity.dto.UserDto;
-import com.spring.fintech.entity.dto.UserRequestDto;
-import com.spring.fintech.entity.dto.UserResponseDto;
-import com.spring.fintech.entity.dto.WalletDto;
-import com.spring.fintech.repository.UserRepository;
-import com.spring.fintech.repository.WalletRepository;
+import com.spring.fintech.user.dto.UserDto;
+import com.spring.fintech.user.dto.UserRequestDto;
+import com.spring.fintech.user.dto.UserResponseDto;
+import com.spring.fintech.user.entity.User;
+import com.spring.fintech.user.repository.UserRepository;
+import com.spring.fintech.wallet.dto.WalletDto;
+import com.spring.fintech.wallet.entity.Wallet;
+import com.spring.fintech.wallet.repository.WalletRepository;
+import com.spring.fintech.wallet.service.WalletService;
 
 @Service("userService")
 public class UserServiceImpl implements UserService{

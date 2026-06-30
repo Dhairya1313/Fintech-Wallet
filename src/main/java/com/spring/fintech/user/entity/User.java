@@ -1,6 +1,8 @@
-package com.spring.fintech.entity;
+package com.spring.fintech.user.entity;
 
 import java.time.LocalDate;
+
+import com.spring.fintech.wallet.entity.Wallet;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

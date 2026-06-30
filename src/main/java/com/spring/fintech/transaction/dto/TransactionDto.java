@@ -1,4 +1,4 @@
-package com.spring.fintech.entity.dto;
+package com.spring.fintech.transaction.dto;
 
 import java.time.LocalDate;
 

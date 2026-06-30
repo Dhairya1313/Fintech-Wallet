@@ -1,4 +1,4 @@
-package com.spring.fintech.entity;
+package com.spring.fintech.wallet.entity;
 
 import java.time.LocalDate;
 

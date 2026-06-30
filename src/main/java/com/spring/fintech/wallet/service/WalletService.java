@@ -1,7 +1,7 @@
-package com.spring.fintech.service;
+package com.spring.fintech.wallet.service;
 
-import com.spring.fintech.entity.dto.TransactionDto;
-import com.spring.fintech.entity.dto.WalletDto;
+import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.wallet.dto.WalletDto;
 
 public interface WalletService {
 	

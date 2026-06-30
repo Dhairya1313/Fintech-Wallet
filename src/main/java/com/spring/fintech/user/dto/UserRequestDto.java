@@ -1,4 +1,4 @@
-package com.spring.fintech.entity.dto;
+package com.spring.fintech.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
