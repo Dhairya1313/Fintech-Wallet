@@ -11,6 +11,5 @@ import com.spring.fintech.transaction.entity.Transaction;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer>{
 
-	@Query("SELECT t FROM Transaction t WHERE t.receiverWallet.walletId = :walletId OR t.serderWallet.walletId = :walletId ORDER BY t.createdAt DESC")
-	public Page<Transaction> findTransactionsByWalletId(Integer walletId, Pageable pageable);  
+	Page<Transaction> findBySenderWallet_WalletIdOrReceiverWallet_WalletId(Integer senderWalletId,Integer receiverWalletId,Pageable pageable);
 }

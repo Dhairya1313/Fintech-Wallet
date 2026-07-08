@@ -21,8 +21,9 @@ public class Wallet {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int walletId;
-	@Column()
-	private int userId;
+//	@Column()
+//	User maps to wallet. No need for two way binding
+//	private int userId; 
 	@Column(nullable = false)
 	private double walletBalance;
 	private String status;

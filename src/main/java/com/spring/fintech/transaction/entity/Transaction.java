@@ -2,8 +2,10 @@ package com.spring.fintech.transaction.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
+import com.spring.fintech.wallet.entity.Wallet;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,14 +23,25 @@ public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int transactionId;
+
+//	Removing this because deleting a transaction 
+//	shouldn't lead to deleting a wallet.
+//	@ManyToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "sender_wallet_id")
+//	private int senderWalletId;
+//	
+//	@ManyToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "receiver_wallet_id")
+//	private int receiverWalletId;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "sender_wallet_id")
-	private int senderWalletId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sender_wallet_id", nullable = false)
+	private Wallet senderWallet;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "receiver_wallet_id", nullable = false)
+	private Wallet receiverWallet;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "receiver_wallet_id")
-	private int receiverWalletId;
 	
 	private double amount;
 	private String type;

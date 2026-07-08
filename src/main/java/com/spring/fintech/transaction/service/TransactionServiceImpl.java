@@ -13,18 +13,22 @@ import org.springframework.stereotype.Service;
 import com.spring.fintech.transaction.dto.TransactionDto;
 import com.spring.fintech.transaction.entity.Transaction;
 import com.spring.fintech.transaction.repository.TransactionRepository;
+import com.spring.fintech.wallet.entity.Wallet;
+import com.spring.fintech.wallet.repository.WalletRepository;
 
 @Service("transactionService")
 public class TransactionServiceImpl implements TransactionService{
 
 	private TransactionRepository transactionRepository;
 	private ModelMapper modelMapper;
+	private WalletRepository walletRepository;
 	
 	@Autowired
-	public TransactionServiceImpl(TransactionRepository transactionRepository, ModelMapper modelMapper) {
+	public TransactionServiceImpl(TransactionRepository transactionRepository, ModelMapper modelMapper, WalletRepository walletRepository) {
 		super();
 		this.transactionRepository = transactionRepository;
 		this.modelMapper = modelMapper;
+		this.walletRepository = walletRepository;
 	}
 
 	@Override
@@ -34,12 +38,32 @@ public class TransactionServiceImpl implements TransactionService{
 		Transaction transaction = modelMapper
 				.map(transactionDto, Transaction.class);
 		
-		transaction.setSenderWalletId(senderWalletId);
-		transaction.setReceiverWalletId(receiverWalletId);
+//		transaction.setSenderWalletId(senderWalletId);
+//		transaction.setReceiverWalletId(receiverWalletId);
+//		Instead of passing the IDs above, we will use objects 
 		
+		Wallet senderWallet = walletRepository.findById(senderWalletId)
+				.orElseThrow(()->
+				new RuntimeException("Sender wallet not found"));
+		Wallet receiverWallet =
+		        walletRepository.findById(receiverWalletId)
+		        .orElseThrow(() ->
+		                new RuntimeException("Receiver wallet not found"));
+		
+		transaction.setSenderWallet(senderWallet);
+		transaction.setReceiverWallet(receiverWallet);
 		Transaction saved = transactionRepository.save(transaction);
 		
-		return modelMapper.map(saved, TransactionDto.class);
+		TransactionDto response =
+		        modelMapper.map(saved, TransactionDto.class);
+
+		response.setSenderWalletId(
+		        saved.getSenderWallet().getWalletId());
+
+		response.setReceiverWalletId(
+		        saved.getReceiverWallet().getWalletId());
+
+		return response;
 	}
 
 	@Override
@@ -54,8 +78,9 @@ public class TransactionServiceImpl implements TransactionService{
 	public Page<TransactionDto> getWalletTransactions(Integer walletId, Integer page, Integer size) {
 		
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-		return transactionRepository.findTransactionsByWalletId(walletId,pageable)
-				.map(transaction-> modelMapper.map(transaction, TransactionDto.class));
+		return transactionRepository.
+				findBySenderWallet_WalletIdOrReceiverWallet_WalletId(walletId, walletId, pageable).map(transaction->
+		modelMapper.map(transaction, TransactionDto.class));
 	}
 
 }

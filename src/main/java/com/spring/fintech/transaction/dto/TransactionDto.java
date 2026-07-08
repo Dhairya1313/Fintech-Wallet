@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransactionDto {
 
-	private int transactionId;
-	private int senderWalletId;
-	private int receiverWalletId;
-	private double amount;
+	private Integer transactionId;
+	private Integer senderWalletId;
+	private Integer receiverWalletId;
+	private Double amount;
 	private String type;
 	private String status;
 	private LocalDate createdAt;

@@ -33,7 +33,7 @@ public class User {
 	private String status;
 	private LocalDate creadtedAt;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="wallet_id",unique=true)
+	@OneToOne(cascade = CascadeType.ALL) //Deleting wallet means deleting user and vice-versa.
+	@JoinColumn(name="wallet_id",unique=true) //Foreign key/ Every user have one wallet only.  
 	private Wallet wallet;
 }
