@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.spring.fintech.common.exception.WalletNotFoundException;
 import com.spring.fintech.transaction.dto.TransactionDto;
 import com.spring.fintech.transaction.entity.Transaction;
 import com.spring.fintech.transaction.repository.TransactionRepository;
@@ -38,17 +39,14 @@ public class TransactionServiceImpl implements TransactionService{
 		Transaction transaction = modelMapper
 				.map(transactionDto, Transaction.class);
 		
-//		transaction.setSenderWalletId(senderWalletId);
-//		transaction.setReceiverWalletId(receiverWalletId);
-//		Instead of passing the IDs above, we will use objects 
 		
 		Wallet senderWallet = walletRepository.findById(senderWalletId)
 				.orElseThrow(()->
-				new RuntimeException("Sender wallet not found"));
+				new WalletNotFoundException(senderWalletId));
 		Wallet receiverWallet =
 		        walletRepository.findById(receiverWalletId)
 		        .orElseThrow(() ->
-		                new RuntimeException("Receiver wallet not found"));
+		        new WalletNotFoundException(receiverWalletId));
 		
 		transaction.setSenderWallet(senderWallet);
 		transaction.setReceiverWallet(receiverWallet);

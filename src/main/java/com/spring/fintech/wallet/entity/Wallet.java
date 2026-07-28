@@ -20,10 +20,7 @@ import lombok.NoArgsConstructor;
 public class Wallet {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int walletId;
-//	@Column()
-//	User maps to wallet. No need for two way binding
-//	private int userId; 
+	private int walletId; 
 	@Column(nullable = false)
 	private double walletBalance;
 	private String status;

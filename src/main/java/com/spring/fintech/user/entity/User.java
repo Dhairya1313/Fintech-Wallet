@@ -7,6 +7,8 @@ import com.spring.fintech.wallet.entity.Wallet;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,10 +32,12 @@ public class User {
 	private String email;
 	@Column(nullable = false, length = 20)
 	private String password;
-	private String status;
-	private LocalDate creadtedAt;
+	@Enumerated(EnumType.STRING)
+	private UserStatus status;
+	private LocalDate createdAt;
 	
-	@OneToOne(cascade = CascadeType.ALL) //Deleting wallet means deleting user and vice-versa.
-	@JoinColumn(name="wallet_id",unique=true) //Foreign key/ Every user have one wallet only.  
+	@OneToOne(cascade = CascadeType.ALL) 
+	@JoinColumn(name="wallet_id",unique=true)  
 	private Wallet wallet;
+
 }

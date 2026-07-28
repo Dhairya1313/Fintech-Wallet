@@ -6,10 +6,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.spring.fintech.common.exception.DuplicateEmailException;
+import com.spring.fintech.common.exception.DuplicateUsernameException;
+import com.spring.fintech.common.exception.UnauthorizedOperationException;
+import com.spring.fintech.common.exception.UserNotFoundException;
 import com.spring.fintech.user.dto.UserDto;
 import com.spring.fintech.user.dto.UserRequestDto;
 import com.spring.fintech.user.dto.UserResponseDto;
 import com.spring.fintech.user.entity.User;
+import com.spring.fintech.user.entity.UserStatus;
 import com.spring.fintech.user.repository.UserRepository;
 import com.spring.fintech.wallet.dto.WalletDto;
 import com.spring.fintech.wallet.entity.Wallet;
@@ -28,34 +33,44 @@ public class UserServiceImpl implements UserService{
 		super();
 		this.userRepository = userRepository;
 		this.modelMapper = modelMapper;
+		this.walletService = walletService;
 	}
 
 	@Override
-	public UserResponseDto registerUser(UserRequestDto userdto) {
-		
-		User savedUser = userRepository.save(modelMapper.map(userdto, User.class));
-		
-		savedUser.setCreadtedAt(LocalDate.now());
-		savedUser.setStatus("Active");
+	public UserResponseDto registerUser(UserRequestDto userDto) {
+		if(userRepository.existsByUserName(userDto.getUserName())) {
+			throw new DuplicateUsernameException(userDto.getUserName());
+		}
+		if (userRepository.existsByEmail(userDto.getEmail())) {
+		    throw new DuplicateEmailException(userDto.getEmail());
+		}
+		User user = modelMapper.map(userDto, User.class);
+
+		user.setCreatedAt(LocalDate.now());
+		user.setStatus(UserStatus.ACTIVE);
+
+		user = userRepository.save(user);
 		
 		WalletDto walletDto = new WalletDto();
-		walletDto.setUserId(savedUser.getUserId());
+		walletDto.setUserId(user.getUserId());
 		
-		savedUser.setWallet(modelMapper.map(walletService.addWallet(walletDto), Wallet.class)); 
-		userRepository.save(savedUser);
+		user.setWallet(modelMapper.map(walletService.addWallet(walletDto), Wallet.class)); 
+		userRepository.save(user);
 		
-		return modelMapper.map(savedUser, UserResponseDto.class);
+		return modelMapper.map(user, UserResponseDto.class);
 	}
 
 	@Override
 	public UserResponseDto authenticateUserByUserName(String userName, String password) {
 		
-		User savedUser = userRepository.findUserByUserName(userName).orElseThrow(()->new RuntimeException("Invalid Username"));
+		User savedUser = userRepository.findUserByUserName(userName)
+				.orElseThrow(()->
+		new UserNotFoundException(userName));
 		
 		if(!savedUser.getPassword().equals(password))
-			throw new RuntimeException("Incorrect Password!");
-		if(!savedUser.getStatus().equalsIgnoreCase("Active"))
-			throw new RuntimeException("User not active");
+			throw new UnauthorizedOperationException("Incorrect Password");
+		if(!savedUser.getStatus().equals(UserStatus.ACTIVE))
+			throw new UnauthorizedOperationException("User not active.");
 		
 		return modelMapper.map(savedUser, UserResponseDto.class);
 		

@@ -6,6 +6,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.spring.fintech.common.exception.InsufficientBalanceException;
+import com.spring.fintech.common.exception.InvalidTransactionException;
+import com.spring.fintech.common.exception.WalletNotFoundException;
 import com.spring.fintech.transaction.dto.TransactionDto;
 import com.spring.fintech.transaction.service.TransactionService;
 import com.spring.fintech.wallet.dto.WalletDto;
@@ -30,8 +33,8 @@ public class WalletServiceImpl implements WalletService{
 	@Override
 	public double checkBalance(int walletId) {
 		
-		Wallet wallet = walletRepository.findById(walletId).orElseThrow(() 
-				->new RuntimeException("No wallet exists."));
+		Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> 
+				new WalletNotFoundException(walletId));
 		return wallet.getWalletBalance();
 	}
 
@@ -48,7 +51,7 @@ public class WalletServiceImpl implements WalletService{
 			transactionService.addTransaction(transactionDto, walletId, walletId);
 			
 			Wallet wallet = walletRepository.findById(walletId).orElseThrow(()
-					->new RuntimeException("Invalid receiver details."));
+					->new WalletNotFoundException(walletId));
 			wallet.setWalletBalance(wallet.getWalletBalance() + amount);
 			
 			transactionDto.setStatus("Success");
@@ -61,7 +64,7 @@ public class WalletServiceImpl implements WalletService{
 	public TransactionDto transferMoney(int walletId, double amount, int receiverWalletId) {
 		
 		Wallet senderWallet = walletRepository.findById(walletId).orElseThrow(() 
-				-> new RuntimeException("No active wallet found."));
+				-> new InvalidTransactionException("No active wallet found."));
 		
 		double balance = senderWallet.getWalletBalance();
 		if(balance>=amount) {
@@ -75,7 +78,9 @@ public class WalletServiceImpl implements WalletService{
 			transactionDto.setStatus("Failed");
 			transactionService.addTransaction(transactionDto, walletId, receiverWalletId);
 			
-			Wallet receiverWallet = walletRepository.findById(receiverWalletId).orElseThrow(()->new RuntimeException("No  found"));
+			Wallet receiverWallet = walletRepository.findById(receiverWalletId)
+					.orElseThrow(()->
+			new InvalidTransactionException("Receiver wallet not found"));
 			
 			senderWallet.setWalletBalance(senderWallet.getWalletBalance()-amount);
 			
@@ -87,7 +92,7 @@ public class WalletServiceImpl implements WalletService{
 			
 		}
 		else
-			throw new RuntimeException("Insufficient Balance");
+			throw new InsufficientBalanceException(balance, amount);
 	}
 
 	@Override
