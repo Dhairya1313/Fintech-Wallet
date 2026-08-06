@@ -10,15 +10,13 @@ import com.spring.fintech.common.exception.DuplicateEmailException;
 import com.spring.fintech.common.exception.DuplicateUsernameException;
 import com.spring.fintech.common.exception.UnauthorizedOperationException;
 import com.spring.fintech.common.exception.UserNotFoundException;
-import com.spring.fintech.user.dto.UserDto;
 import com.spring.fintech.user.dto.UserRequestDto;
 import com.spring.fintech.user.dto.UserResponseDto;
 import com.spring.fintech.user.entity.User;
 import com.spring.fintech.user.entity.UserStatus;
 import com.spring.fintech.user.repository.UserRepository;
-import com.spring.fintech.wallet.dto.WalletDto;
+import com.spring.fintech.wallet.dto.WalletRequestDto;
 import com.spring.fintech.wallet.entity.Wallet;
-import com.spring.fintech.wallet.repository.WalletRepository;
 import com.spring.fintech.wallet.service.WalletService;
 
 @Service("userService")
@@ -51,10 +49,10 @@ public class UserServiceImpl implements UserService{
 
 		user = userRepository.save(user);
 		
-		WalletDto walletDto = new WalletDto();
-		walletDto.setUserId(user.getUserId());
+		WalletRequestDto walletReqDto = new WalletRequestDto();
+		walletReqDto.setUserId(user.getUserId());
 		
-		user.setWallet(modelMapper.map(walletService.addWallet(walletDto), Wallet.class)); 
+		user.setWallet(modelMapper.map(walletService.addWallet(walletReqDto), Wallet.class)); 
 		userRepository.save(user);
 		
 		return modelMapper.map(user, UserResponseDto.class);

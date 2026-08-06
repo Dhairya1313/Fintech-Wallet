@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.transaction.dto.TransactionResponseDto;
 import com.spring.fintech.transaction.service.TransactionService;
 import com.spring.fintech.user.service.UserService;
 import com.spring.fintech.wallet.service.WalletService;
@@ -32,12 +32,12 @@ public class WalletController {
 	}
 	
 	@PostMapping("/add-money")
-	public TransactionDto addBalance(@RequestParam Integer walletId, @RequestParam Double amount) {
+	public TransactionResponseDto addBalance(@RequestParam Integer walletId, @RequestParam Double amount) {
 		return walletService.addMoney(walletId, amount);
 	}
 	
 	@PostMapping("/transfer")
-	public TransactionDto sendMoney(@RequestParam Integer walletId, @RequestParam Integer receiverWalletId, @RequestParam Double amount) {
+	public TransactionResponseDto sendMoney(@RequestParam Integer walletId, @RequestParam Integer receiverWalletId, @RequestParam Double amount) {
 		return walletService.transferMoney(walletId, amount, receiverWalletId);
 	}
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.transaction.dto.TransactionResponseDto;
 import com.spring.fintech.transaction.service.TransactionService;
 import com.spring.fintech.user.service.UserService;
 import com.spring.fintech.wallet.service.WalletService;
@@ -26,7 +26,7 @@ private TransactionService transactionService;
 	
 	
 	@GetMapping
-	public Page<TransactionDto> getTransactions(@RequestParam Integer walletId,@RequestParam Integer page){
+	public Page<TransactionResponseDto> getTransactions(@RequestParam Integer walletId,@RequestParam Integer page){
 		return transactionService.getWalletTransactions(walletId, page, 10);
 	}
 }

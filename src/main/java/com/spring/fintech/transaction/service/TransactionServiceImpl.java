@@ -11,7 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.spring.fintech.common.exception.WalletNotFoundException;
-import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.transaction.dto.TransactionRequestDto;
+import com.spring.fintech.transaction.dto.TransactionResponseDto;
 import com.spring.fintech.transaction.entity.Transaction;
 import com.spring.fintech.transaction.repository.TransactionRepository;
 import com.spring.fintech.wallet.entity.Wallet;
@@ -33,7 +34,7 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 
 	@Override
-	public TransactionDto addTransaction(TransactionDto transactionDto, Integer senderWalletId,
+	public TransactionResponseDto addTransaction(TransactionRequestDto transactionDto, Integer senderWalletId,
 			Integer receiverWalletId) {
 		
 		Transaction transaction = modelMapper
@@ -52,8 +53,8 @@ public class TransactionServiceImpl implements TransactionService{
 		transaction.setReceiverWallet(receiverWallet);
 		Transaction saved = transactionRepository.save(transaction);
 		
-		TransactionDto response =
-		        modelMapper.map(saved, TransactionDto.class);
+		TransactionResponseDto response =
+		        modelMapper.map(saved, TransactionResponseDto.class);
 
 		response.setSenderWalletId(
 		        saved.getSenderWallet().getWalletId());
@@ -65,20 +66,20 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 
 	@Override
-	public TransactionDto getTransactionById(Integer transactionId) {
+	public TransactionResponseDto getTransactionById(Integer transactionId) {
 		
 		Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(()-> new RuntimeException("Transaction not found"));
 	
-		return modelMapper.map(transaction, TransactionDto.class);
+		return modelMapper.map(transaction, TransactionResponseDto.class);
 	}
 
 	@Override
-	public Page<TransactionDto> getWalletTransactions(Integer walletId, Integer page, Integer size) {
+	public Page<TransactionResponseDto> getWalletTransactions(Integer walletId, Integer page, Integer size) {
 		
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		return transactionRepository.
 				findBySenderWallet_WalletIdOrReceiverWallet_WalletId(walletId, walletId, pageable).map(transaction->
-		modelMapper.map(transaction, TransactionDto.class));
+		modelMapper.map(transaction, TransactionResponseDto.class));
 	}
 
 }

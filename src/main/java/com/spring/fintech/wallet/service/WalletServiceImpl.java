@@ -1,6 +1,7 @@
 package com.spring.fintech.wallet.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 import com.spring.fintech.common.exception.InsufficientBalanceException;
 import com.spring.fintech.common.exception.InvalidTransactionException;
 import com.spring.fintech.common.exception.WalletNotFoundException;
-import com.spring.fintech.transaction.dto.TransactionDto;
+import com.spring.fintech.transaction.dto.TransactionRequestDto;
+import com.spring.fintech.transaction.dto.TransactionResponseDto;
 import com.spring.fintech.transaction.service.TransactionService;
-import com.spring.fintech.wallet.dto.WalletDto;
+import com.spring.fintech.wallet.dto.WalletRequestDto;
+import com.spring.fintech.wallet.dto.WalletResponseDto;
 import com.spring.fintech.wallet.entity.Wallet;
 import com.spring.fintech.wallet.repository.WalletRepository;
 
@@ -39,29 +42,27 @@ public class WalletServiceImpl implements WalletService{
 	}
 
 	@Override
-	public TransactionDto addMoney(int walletId, double amount) {
+	public TransactionResponseDto addMoney(int walletId, double amount) {
 		
-			TransactionDto transactionDto = new TransactionDto();
+			TransactionRequestDto transactionReqDto = new TransactionRequestDto();
 			
-			transactionDto.setAmount(amount);
-			transactionDto.setCreatedAt(LocalDate.now());
-			transactionDto.setReceiverWalletId(walletId);
-			transactionDto.setSenderWalletId(walletId);
-			transactionDto.setStatus("Failed");
-			transactionService.addTransaction(transactionDto, walletId, walletId);
+			transactionReqDto.setAmount(amount);
+			transactionReqDto.setReceiverWalletId(walletId);
+			transactionReqDto.setSenderWalletId(walletId);
+			TransactionResponseDto transactionResponseDto =  transactionService.addTransaction(transactionReqDto, walletId, walletId);
 			
 			Wallet wallet = walletRepository.findById(walletId).orElseThrow(()
 					->new WalletNotFoundException(walletId));
 			wallet.setWalletBalance(wallet.getWalletBalance() + amount);
 			
-			transactionDto.setStatus("Success");
-			transactionService.addTransaction(transactionDto, walletId, walletId);
-			return transactionDto;
+			transactionResponseDto.setStatus("Success");
+			transactionResponseDto.setCreatedAt(LocalDateTime.now());
+			return transactionResponseDto;
 		
 	}
 
 	@Override
-	public TransactionDto transferMoney(int walletId, double amount, int receiverWalletId) {
+	public TransactionResponseDto transferMoney(int walletId, double amount, int receiverWalletId) {
 		
 		Wallet senderWallet = walletRepository.findById(walletId).orElseThrow(() 
 				-> new InvalidTransactionException("No active wallet found."));
@@ -69,14 +70,12 @@ public class WalletServiceImpl implements WalletService{
 		double balance = senderWallet.getWalletBalance();
 		if(balance>=amount) {
 			
-			TransactionDto transactionDto = new TransactionDto();
+			TransactionRequestDto transactionReqDto = new TransactionRequestDto();
 			
-			transactionDto.setAmount(amount);
-			transactionDto.setCreatedAt(LocalDate.now());
-			transactionDto.setReceiverWalletId(receiverWalletId);
-			transactionDto.setSenderWalletId(walletId);
-			transactionDto.setStatus("Failed");
-			transactionService.addTransaction(transactionDto, walletId, receiverWalletId);
+			transactionReqDto.setAmount(amount);
+			transactionReqDto.setReceiverWalletId(receiverWalletId);
+			transactionReqDto.setSenderWalletId(walletId);
+			TransactionResponseDto transactionResponseDto = transactionService.addTransaction(transactionReqDto, walletId, receiverWalletId);
 			
 			Wallet receiverWallet = walletRepository.findById(receiverWalletId)
 					.orElseThrow(()->
@@ -86,9 +85,8 @@ public class WalletServiceImpl implements WalletService{
 			
 			receiverWallet.setWalletBalance(receiverWallet.getWalletBalance() + amount);
 			
-			transactionDto.setStatus("Success");
-			transactionService.addTransaction(transactionDto, walletId, receiverWalletId);
-			return transactionDto;
+			transactionResponseDto.setStatus("Success");
+			return transactionResponseDto;
 			
 		}
 		else
@@ -96,12 +94,16 @@ public class WalletServiceImpl implements WalletService{
 	}
 
 	@Override
-	public WalletDto addWallet(WalletDto walletDto) {
-		walletDto.setCreatedAt(LocalDate.now());
-		walletDto.setWalletBalance(0);
-		walletDto.setStatus("Active");
-		walletRepository.save(modelMapper.map(walletDto, Wallet.class));
-		return walletDto;
+	public WalletResponseDto addWallet(WalletRequestDto walletRequestDto) {
+		
+		WalletResponseDto walletResponseDto = new WalletResponseDto();
+		
+		walletResponseDto.setCreatedAt(LocalDate.now());
+		walletResponseDto.setWalletBalance(0.0);
+		walletResponseDto.setStatus("Active");
+		walletRepository.save(modelMapper.map(walletResponseDto, Wallet.class));
+		
+		return walletResponseDto;
 	}
 	
 }

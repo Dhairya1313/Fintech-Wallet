@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WalletDto {
-	private int walletId;
-	private int userId;
-	private double walletBalance;
-	private String status;
-	private LocalDate createdAt;
+public class WalletResponseDto {
+
+    private Integer walletId;
+    private Integer userId;
+    private Double walletBalance;
+    private String status;
+    private LocalDate createdAt;
+
 }
